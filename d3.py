@@ -1,4 +1,5 @@
 import csv
+import pprint as pp
 
 training_data = []
 header = [	'PassengerId',
@@ -21,13 +22,13 @@ def unique_vals(rows, col):
 def is_numeric(value):
 	return isinstance(value, int) or isinstance(value, float)
 
-def class_counts(rows, i):
+def class_counts(rows):
     counts = {}
     for row in rows:
-        label = row[header[i]]
-        if label not in counts:
-            counts[label] = 0
-        counts[label] += 1
+    	label = row[1]
+    	if label not in counts:
+    		counts[label] = 0
+    	counts[label] += 1
     
     return counts
 
@@ -41,14 +42,20 @@ def partition(rows, question):
     
     return true_rows, false_rows
 
-def gini(rows, i): #impurity
-	counts = class_counts(rows, i)
+def gini(rows): #impurity
+	counts = class_counts(rows)
 	impurity = 1
 	for lbl in counts:
 		prob_of_lbl = counts[lbl] / float(len(rows))
 		impurity -= prob_of_lbl**2
 
 	return impurity
+
+def info_gain(left, right, current_uncertainty):
+	p = float(len(left)) / (len(left) + len(right))
+
+	return current_uncertainty - p * gini(left) - (1 - p) * gini(right)
+
 
 class Question:
 	def __init__(self, column, value):
@@ -59,7 +66,7 @@ class Question:
 		return self.value
 
 	def match(self, example):
-		val = example[header[self.column]]
+		val = example[self.column]
 		if is_numeric(val):
 			return val >= self.value
 		else:
@@ -73,22 +80,46 @@ class Question:
 		return "Is %s %s %s?" % (
             header[self.column], condition, str(self.value))
 
+dum = []
+intData = [	header[0],
+			header[1],
+			header[2],
+			header[6],
+			header[7]]
+floatData = [	header[9],
+				header[5]]
 with open('train.csv') as csvfile:
 	reader = csv.DictReader(csvfile)
 	for line in reader:
-		training_data.append(line)
+		dum = []
+		for i in header:
+			if i in intData and line[i] != '':
+				line[i] = int(line[i])
+			elif i in floatData and line[i] != '':
+				line[i] = float(line[i])
+			dum.append(line[i])
+		training_data.append(dum)
 
-print(class_counts(training_data, 3))
-print(unique_vals(training_data, header[1]))
-print(Question(4,'fmale'))
+# pp.pprint(training_data)
 
-q = Question(4, 'male')
-example = training_data[3]
-print(q)
-print(example)
-print(q.match(example))
+# pp.pprint(class_counts(training_data))
+# pp.pprint(unique_vals(training_data, 5))
+# pp.pprint(Question(4,'fmale'))
 
-true_rows, false_rows = partition(training_data, Question(4, 'male'))
-print(true_rows,' ',false_rows)
+# q = Question(4, 'male')
+# example = training_data[3]
+# print(q)
+# print(example)
+# print(q.match(example))
 
-print(gini(training_data, 4))
+# true_rows, false_rows = partition(training_data, Question(4, 'male'))
+# print(true_rows,' ',false_rows)
+
+# print(gini(training_data))
+
+current_uncertainty = gini(training_data)
+print(current_uncertainty)
+
+print(Question(4, 'female'))
+true_rows, false_rows = partition(training_data, Question(4, 'female'))
+print(info_gain(true_rows, false_rows, current_uncertainty))
