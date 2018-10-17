@@ -56,6 +56,28 @@ def info_gain(left, right, current_uncertainty):
 
 	return current_uncertainty - p * gini(left) - (1 - p) * gini(right)
 
+def find_best_split(rows):
+	best_gain = 0
+	best_question = None
+	current_uncertainty = gini(rows)
+	n_features = len(rows[0]) - 1
+
+	for col in range(n_features):
+		values = set([row[col] for row in rows])
+
+		for val in values:
+			question = Question(col, val)
+			true_rows, false_rows = partition(rows, question)
+
+			if len(true_rows) == 0 or len(false_rows) == 0:
+				continue
+
+			gain = info_gain(true_rows, false_rows, current_uncertainty)
+
+			if gain >= best_gain:
+				best_gain, best_question = gain, question
+
+	return best_gain, best_question
 
 class Question:
 	def __init__(self, column, value):
@@ -117,9 +139,13 @@ with open('train.csv') as csvfile:
 
 # print(gini(training_data))
 
-current_uncertainty = gini(training_data)
-print(current_uncertainty)
+# current_uncertainty = gini(training_data)
+# print(current_uncertainty)
 
-print(Question(4, 'female'))
-true_rows, false_rows = partition(training_data, Question(4, 'female'))
-print(info_gain(true_rows, false_rows, current_uncertainty))
+# print(Question(4, 'fmale'))
+# true_rows, false_rows = partition(training_data, Question(4, 'female'))
+# print(info_gain(true_rows, false_rows, current_uncertainty))
+
+best_gain, best_question = find_best_split(training_data)
+pp.pprint(best_question)
+pp.pprint(best_gain)
