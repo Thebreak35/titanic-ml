@@ -21,6 +21,15 @@ def unique_vals(rows, col):
 def is_numeric(value):
 	return isinstance(value, int) or isinstance(value, float)
 
+def class_counts(rows):
+    counts = {}
+    for row in rows:
+        label = row[header[1]]
+        if label not in counts:
+            counts[label] = 0
+        counts[label] += 1
+    return counts
+
 class Question:
 	def __init__(self, column, value):
 		self.column = column
@@ -45,5 +54,12 @@ with open('train.csv') as csvfile:
 	for line in reader:
 		training_data.append(line)
 
+print(class_counts(training_data))
 print(unique_vals(training_data, header[1]))
 print(Question(4,'fmale'))
+
+q = Question(4, 'male')
+example = training_data[3][header[4]]
+print(q)
+print(example)
+print(q.match(example))
