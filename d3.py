@@ -30,13 +30,28 @@ def class_counts(rows):
         counts[label] += 1
     return counts
 
+def partition(rows, question):
+    true_rows, false_rows = [], []
+    for row in rows:
+    	data = row[header[4]]
+    	print('data: ',data)
+        if question.match(row):
+            true_rows.append(row)
+        else:
+            false_rows.append(row)
+    return true_rows, false_rows
+
 class Question:
 	def __init__(self, column, value):
 		self.column = column
 		self.value = value
 
+	def showValue(self):
+		return self.value
+
 	def match(self, example):
-		val = example[self.column]
+		print(self.column)
+		val = example[header[self.column]]
 		if is_numeric(val):
 			return val >= self.value
 		else:
@@ -59,7 +74,10 @@ print(unique_vals(training_data, header[1]))
 print(Question(4,'fmale'))
 
 q = Question(4, 'male')
-example = training_data[3][header[4]]
+example = training_data[3]
 print(q)
 print(example)
 print(q.match(example))
+
+true_rows, false_rows = partition(training_data, Question(4, 'male'))
+print(true_rows,' ',false_rows)
