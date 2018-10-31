@@ -2,18 +2,19 @@ import csv
 import pprint as pp
 
 training_data = []
-header = [	'PassengerId',
-				'Pclass',
-				'Name',
-				'Sex',
-				'Age',
-				'SibSp',
-				'Parch',
-				'Ticket',
-				'Fare',
-				'Cabin',
-				'Embarked',
-				'Survived']
+header = [	
+	'PassengerId',
+	'Pclass',
+	'Name',
+	'Sex',
+	'Age',
+	'SibSp',
+	'Parch',
+	'Ticket',
+	'Fare',
+	'Cabin',
+	'Embarked',
+	'Survived']
 
 
 def unique_vals(rows, col):
@@ -163,13 +164,14 @@ class Decision_Node:
 dum = []
 
 
-intData = [	header[0],
-			header[1],
-			header[5],
-			header[6],
-			header[11]]
-floatData = [	header[8],
-				header[4]]
+intData = [
+	header[0],
+	header[1],
+	header[5],
+	header[6],
+	header[11]]
+
+floatData = [header[8],header[4]]
 with open('train.csv') as csvfile:
 	reader = csv.DictReader(csvfile)
 	for line in reader:
